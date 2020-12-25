@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>EvalTask.API</AssemblyName>
+        <RootNamespace>EvalTask.API</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
+      <PackageReference Include="Spells" Version="1.0.0-alpha6" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\EvalTask.Data\EvalTask.Data.csproj" />
+      <ProjectReference Include="..\EvalTask.Dto\EvalTask.Dto.csproj" />
+      <ProjectReference Include="..\EvalTask.Identity\EvalTask.Identity.csproj" />
+      <ProjectReference Include="..\EvalTask.Swagger\EvalTask.Swagger.csproj" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
+</Project>

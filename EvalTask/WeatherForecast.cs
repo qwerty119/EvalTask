@@ -1,6 +1,6 @@
 using System;
 
-namespace EvalTask
+namespace EvalTask.API
 {
     public class WeatherForecast
     {

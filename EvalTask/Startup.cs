@@ -1,17 +1,23 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using EvalTask.API.Extensions;
+using EvalTask.Data;
+using EvalTask.Domain.Entities;
+using EvalTask.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using EvalTask.Swagger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Spells.Extensions;
 
-namespace EvalTask
+
+namespace EvalTask.API
 {
     public class Startup
     {
@@ -25,8 +31,20 @@ namespace EvalTask
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<EvalTaskContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+ 
+            // services.AddIdentity<User, IdentityRole>()
+            //     .AddEntityFrameworkStores<EvalTaskContext>();
+            services.AddDefaultIdentity<User>(ConfigureIdentity)
+                .AddEntityFrameworkStores<EvalTaskContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddScoped<IdentityDbContext<User>, EvalTaskContext>();
+            services.Do(ConfigureAuthentication);
+            
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,18 +56,56 @@ namespace EvalTask
             }
             
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Eval Task API");
-            });
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+        
+        private void ConfigureAuthentication(IServiceCollection services)
+        {
+            services.AddConfig<JwtOptions>(Configuration, "Identity:Jwt", out var jwtOptions);
+            services.AddSingleton<JwtGenerator>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.Audience = jwtOptions.Audience; 
+                    options.ClaimsIssuer = jwtOptions.Issuer;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        
+                        IssuerSigningKey = jwtOptions.GetSecurityKey(),
+                        
+                        RequireExpirationTime = true,
+                        // ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+        }
+        
+        private void ConfigureIdentity(IdentityOptions options)
+        {
+            options.SignIn.RequireConfirmedEmail = false;
+            options.User.RequireUniqueEmail = true;
+            
+            options.Password.RequiredLength = 5;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
         }
     }
 }
