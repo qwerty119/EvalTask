@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using EvalTask.API.Extensions;
 using EvalTask.Data;
 using EvalTask.Domain.Entities;
@@ -34,18 +35,17 @@ namespace EvalTask.API
         {
             services.AddDbContext<EvalTaskContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            //     ,
-            // x => x.MigrationsAssembly("EvalTask.Data")
- 
-            // services.AddIdentity<User, IdentityRole>()
-            //     .AddEntityFrameworkStores<EvalTaskContext>();
+            
             services.AddDefaultIdentity<User>(ConfigureIdentity)
                 .AddEntityFrameworkStores<EvalTaskContext>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<IdentityDbContext<User>, EvalTaskContext>();
             services.Do(ConfigureAuthentication);
-            services.AddMediatR(typeof(Startup));
+            
+            services.AddScoped<IMediator, Mediator>();
+            services.Do(ConfigureMediatorHandlers);
+            
             services.AddControllers();
             services.AddSwagger();
         }
@@ -68,6 +68,11 @@ namespace EvalTask.API
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+        
+        private void ConfigureMediatorHandlers(IServiceCollection services)
+        {
+            services.AddMediatR(AppDomain.CurrentDomain.Load("EvalTask.Product.SQRS"));
         }
         
         private void ConfigureAuthentication(IServiceCollection services)

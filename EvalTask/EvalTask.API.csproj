@@ -27,6 +27,7 @@
       <ProjectReference Include="..\EvalTask.Data\EvalTask.Data.csproj" />
       <ProjectReference Include="..\EvalTask.Dto\EvalTask.Dto.csproj" />
       <ProjectReference Include="..\EvalTask.Identity\EvalTask.Identity.csproj" />
+      <ProjectReference Include="..\EvalTask.Product.SQRS\EvalTask.Product.SQRS.csproj" />
       <ProjectReference Include="..\EvalTask.Swagger\EvalTask.Swagger.csproj" />
     </ItemGroup>
 

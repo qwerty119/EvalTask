@@ -32,6 +32,16 @@ namespace EvalTask.Data
                 .HasOne(x => x.Category)
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.CategoryId);
+
+            builder.Entity<Product>()
+                .HasOne(x => x.Creator)
+                .WithMany(x => x.CreatedProducts)
+                .HasForeignKey(x => x.CreatedByUserId);
+
+            builder.Entity<Product>()
+                .HasOne(x => x.Changer)
+                .WithMany(x => x.UpdatedProducts)
+                .HasForeignKey(x => x.UpdatedByUserId);
             
             builder.Entity<Category>()
                 .HasIndex(x => x.Id)
@@ -40,12 +50,34 @@ namespace EvalTask.Data
             builder.Entity<Category>()
                 .HasIndex(x => x.Name)
                 .IsUnique();
+
+            builder.Entity<Category>()
+                .HasOne(x => x.Creator)
+                .WithMany(x => x.CreatedCategories)
+                .HasForeignKey(x => x.CreatedByUserId);
+            
+            builder.Entity<Category>()
+                .HasOne(x => x.Changer)
+                .WithMany(x => x.UpdatedCategories)
+                .HasForeignKey(x => x.UpdatedByUserId);
             
             builder.Entity<Category>()
                 .Do(CategorySeed);
             
             builder.Entity<Product>()
                 .Do(ProductSeed);
+            
+            builder.Entity<User>()
+                .HasData(new User
+                {
+                    Id = "0ed6a80b-f50e-4a6e-8fe9-a7242f78cf1e",
+                    UserName = "admin",
+                    NormalizedUserName = "ADMIN",
+                    Email = "admin@et.com",
+                    NormalizedEmail = "ADMIN@ET.COM",
+                    PasswordHash = "AQAAAAEAACcQAAAAEHbdZG98rdwPUP87OZHtLhzegOGb+tUgA+jT6tG0/ILYLLb/lSGTLkZShY8t4yUx5Q==",
+                    PhoneNumber = "+79999999999",
+                });
         }
         
         // "e0bc9e7a-67e1-4d46-9605-13daa1908a86"
@@ -53,7 +85,7 @@ namespace EvalTask.Data
         protected void CategorySeed(EntityTypeBuilder<Category> builder)
         {
             builder.HasData(
-                new Category("TestCat", "Foo Bar")
+                new Category("TestCat", "Foo Bar", "0ed6a80b-f50e-4a6e-8fe9-a7242f78cf1e")
                 {
                     Id = Guid.Parse("012ee0ef-e051-4e04-acc9-07ee03898f93")
                 }
@@ -63,7 +95,7 @@ namespace EvalTask.Data
         protected void ProductSeed(EntityTypeBuilder<Product> builder)
         {
             builder.HasData(
-                new Product("TestProd", new Guid("012ee0ef-e051-4e04-acc9-07ee03898f93"))
+                new Product("TestProd", new Guid("012ee0ef-e051-4e04-acc9-07ee03898f93"), "0ed6a80b-f50e-4a6e-8fe9-a7242f78cf1e")
                 {
                     Id = Guid.Parse("e0bc9e7a-67e1-4d46-9605-13daa1908a86"),
                     Description = "Foo Bar",
