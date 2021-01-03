@@ -13,10 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EvalTask.API.Controllers.Accounts
 {
-    
-    [Route("[controller]")]
-    [ApiController]
-    public class TokenController : ControllerBase
+    public class TokenController : BaseController
     {
         
         private readonly JwtGenerator _tokenGenerator;
@@ -26,8 +23,7 @@ namespace EvalTask.API.Controllers.Accounts
         public TokenController(SignInManager<User> signInManager, 
             JwtGenerator tokenGenerator, 
             EvalTaskContext context, 
-            ILoggerFactory logger 
-            ) 
+            ILoggerFactory logger)  : base(logger)
         {
             _signInManager = signInManager;
             _tokenGenerator = tokenGenerator;

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using EvalTask.Swagger;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +34,8 @@ namespace EvalTask.API
         {
             services.AddDbContext<EvalTaskContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //     ,
+            // x => x.MigrationsAssembly("EvalTask.Data")
  
             // services.AddIdentity<User, IdentityRole>()
             //     .AddEntityFrameworkStores<EvalTaskContext>();
@@ -42,7 +45,7 @@ namespace EvalTask.API
 
             services.AddScoped<IdentityDbContext<User>, EvalTaskContext>();
             services.Do(ConfigureAuthentication);
-            
+            services.AddMediatR(typeof(Startup));
             services.AddControllers();
             services.AddSwagger();
         }
