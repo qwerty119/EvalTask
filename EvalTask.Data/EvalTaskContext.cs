@@ -32,11 +32,12 @@ namespace EvalTask.Data
                 .HasOne(x => x.Category)
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.CategoryId);
-
+            
             builder.Entity<Product>()
                 .HasOne(x => x.Creator)
                 .WithMany(x => x.CreatedProducts)
-                .HasForeignKey(x => x.CreatedByUserId);
+                .HasForeignKey(x => x.CreatedByUserId)
+                .IsRequired();
 
             builder.Entity<Product>()
                 .HasOne(x => x.Changer)
@@ -50,22 +51,17 @@ namespace EvalTask.Data
             builder.Entity<Category>()
                 .HasIndex(x => x.Name)
                 .IsUnique();
-
+            
             builder.Entity<Category>()
                 .HasOne(x => x.Creator)
                 .WithMany(x => x.CreatedCategories)
-                .HasForeignKey(x => x.CreatedByUserId);
+                .HasForeignKey(x => x.CreatedByUserId)
+                .IsRequired();
             
             builder.Entity<Category>()
                 .HasOne(x => x.Changer)
                 .WithMany(x => x.UpdatedCategories)
                 .HasForeignKey(x => x.UpdatedByUserId);
-            
-            builder.Entity<Category>()
-                .Do(CategorySeed);
-            
-            builder.Entity<Product>()
-                .Do(ProductSeed);
             
             builder.Entity<User>()
                 .HasData(new User
@@ -78,6 +74,12 @@ namespace EvalTask.Data
                     PasswordHash = "AQAAAAEAACcQAAAAEHbdZG98rdwPUP87OZHtLhzegOGb+tUgA+jT6tG0/ILYLLb/lSGTLkZShY8t4yUx5Q==",
                     PhoneNumber = "+79999999999",
                 });
+            
+            builder.Entity<Category>()
+                .Do(CategorySeed);
+            
+            builder.Entity<Product>()
+                .Do(ProductSeed);
         }
         
         // "e0bc9e7a-67e1-4d46-9605-13daa1908a86"

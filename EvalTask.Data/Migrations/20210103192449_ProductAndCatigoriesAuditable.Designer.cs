@@ -4,14 +4,16 @@ using EvalTask.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EvalTask.Data.Migrations
 {
     [DbContext(typeof(EvalTaskContext))]
-    partial class EvalTaskContextModelSnapshot : ModelSnapshot
+    [Migration("20210103192449_ProductAndCatigoriesAuditable")]
+    partial class ProductAndCatigoriesAuditable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

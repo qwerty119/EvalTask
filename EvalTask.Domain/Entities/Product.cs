@@ -17,6 +17,7 @@ namespace EvalTask.Domain.Entities
         {
             Name = name;
             CategoryId = categoryId;
+            CreatedByUserId = createdByUserId;
             CreatedDate = DateTime.Now;
         }
         
