@@ -1,9 +1,11 @@
 using System;
 using System.Reflection;
+using AutoMapper;
 using EvalTask.API.Extensions;
 using EvalTask.Data;
 using EvalTask.Domain.Entities;
 using EvalTask.Identity;
+using EvalTask.Services.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +47,8 @@ namespace EvalTask.API
             
             services.AddScoped<IMediator, Mediator>();
             services.Do(ConfigureMediatorHandlers);
+
+            services.Do(ConfigureMapping);
             
             services.AddControllers();
             services.AddSwagger();
@@ -115,5 +119,15 @@ namespace EvalTask.API
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
         }
+
+        private void ConfigureMapping(IServiceCollection services)
+        {
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile<ProductProfile>();
+                config.AddProfile<UserProfile>();
+            });
+        }
+
     }
 }
