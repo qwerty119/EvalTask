@@ -1,25 +1,28 @@
 using System;
-using System.Reflection;
 using AutoMapper;
 using EvalTask.API.Extensions;
 using EvalTask.Data;
 using EvalTask.Domain.Entities;
+using EvalTask.Features.UploadServices;
+using EvalTask.Features.UploadServices.Base;
+using EvalTask.Features.UploadServices.Interfaces;
+using EvalTask.Features.UploadServices.Product;
 using EvalTask.Identity;
 using EvalTask.Services.Mapping;
+using EvalTask.Swagger;
+using Hangfire;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using EvalTask.Swagger;
-using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Spells.Extensions;
-
 
 namespace EvalTask.API
 {
@@ -43,9 +46,19 @@ namespace EvalTask.API
                 .AddDefaultTokenProviders();
 
             services.AddScoped<IdentityDbContext<User>, EvalTaskContext>();
+            // services.AddTransient<UploadStarter>();
+            services.AddScoped<IUploader, FileUploader>();
+            // services.AddTransient(typeof(IUploadStarter<>),typeof(UploadStarter<>));
+            // services.AddTransient(typeof(IUploader<>),typeof(FileUploader<>));
+            services.AddScoped<ICsvFileParser<Product>, CsvProductParserService>();
+            services.AddScoped<IJsonFileParser<Product>, JsonProductParserService>();
+            
+            
+            
             services.Do(ConfigureAuthentication);
             
             services.AddScoped<IMediator, Mediator>();
+            
             services.Do(ConfigureMediatorHandlers);
 
             services.Do(ConfigureMapping);
@@ -63,6 +76,8 @@ namespace EvalTask.API
             }
             
             app.UseSwagger();
+            
+            app.UseHangfireDashboard();
 
             app.UseHttpsRedirection();
 
@@ -76,7 +91,7 @@ namespace EvalTask.API
         
         private void ConfigureMediatorHandlers(IServiceCollection services)
         {
-            services.AddMediatR(AppDomain.CurrentDomain.Load("EvalTask.Product.SQRS"));
+            services.AddMediatR(AppDomain.CurrentDomain.Load("EvalTask.Features"));
         }
         
         private void ConfigureAuthentication(IServiceCollection services)
@@ -106,6 +121,9 @@ namespace EvalTask.API
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+            
+            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddHangfireServer();
         }
         
         private void ConfigureIdentity(IdentityOptions options)
@@ -126,6 +144,7 @@ namespace EvalTask.API
             {
                 config.AddProfile<ProductProfile>();
                 config.AddProfile<UserProfile>();
+                config.AddProfile<CategoryProfile>();
             });
         }
 

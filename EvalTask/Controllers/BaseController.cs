@@ -1,3 +1,5 @@
+using EvalTask.Identity;
+using EvalTask.Features;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,12 +16,12 @@ namespace EvalTask.API.Controllers
         private IMediator _mediator;
            
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+        
+        protected UserContext UserContext => new UserContext(User.GetIdentifier());
 
         protected BaseController(ILoggerFactory logger)
         {
             Logger = logger.CreateLogger(GetType());
         }
-        
-        
     }
 }

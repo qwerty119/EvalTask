@@ -23,7 +23,7 @@ namespace EvalTask.Identity
             var payload = new JwtPayload(
                 _options.Issuer,
                 _options.Audience,
-                claims, null, DateTime.UtcNow.Add(TimeSpan.FromMinutes(3))
+                claims, null, DateTime.UtcNow.Add(TimeSpan.FromMinutes(1000))
             );
             
             return new JwtSecurityTokenHandler()

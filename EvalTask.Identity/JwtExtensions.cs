@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +9,6 @@ namespace EvalTask.Identity
 {
     public static class JwtExtensions
     {
-
         public static SecurityKey GetSecurityKey(this JwtOptions options)
         {
             if (options.SecretPhrase.HasValue())
@@ -22,7 +22,7 @@ namespace EvalTask.Identity
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (Guid.TryParse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var identifier))
+            if (Guid.TryParse(principal.FindFirst(JwtRegisteredClaimNames.Sid)?.Value, out var identifier))
                 return identifier;
 
             throw new ArgumentException("No identifier");

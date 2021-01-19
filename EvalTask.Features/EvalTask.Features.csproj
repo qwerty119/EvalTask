@@ -5,13 +5,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Hangfire.Core" Version="1.7.18" />
       <PackageReference Include="MediatR" Version="9.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\EvalTask.Data\EvalTask.Data.csproj" />
       <ProjectReference Include="..\EvalTask.Domain\EvalTask.Domain.csproj" />
       <ProjectReference Include="..\EvalTask.Dto\EvalTask.Dto.csproj" />
+      <ProjectReference Include="..\EvalTask.Services\EvalTask.Services.csproj" />
     </ItemGroup>
 
 </Project>

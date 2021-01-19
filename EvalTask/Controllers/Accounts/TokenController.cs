@@ -51,7 +51,8 @@ namespace EvalTask.API.Controllers.Accounts
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Email), 
+                new Claim(ClaimTypes.NameIdentifier, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sid, user.Id), 
             };
             
             return new TokenDto

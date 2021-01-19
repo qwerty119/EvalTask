@@ -21,13 +21,13 @@ namespace EvalTask.Domain.Entities
             CreatedDate = DateTime.Now;
         }
         
-        public string Name { get; protected set;}
+        public string Name { get; set;}
         
         public string Description { get; set; }
 
         public string Specification { get; set; }
         
-        public Guid CategoryId { get; protected set; }
+        public Guid CategoryId { get; set; }
         public Category Category { get; set; }
 
         public bool IsDeleted { get; set; }
