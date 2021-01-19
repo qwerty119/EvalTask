@@ -20,10 +20,7 @@ namespace EvalTask.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ProductUpload(List<IFormFile> files)
-        {
-            await Mediator.Send(new ImportProductCommand(files, UserContext));
-            return Ok(new {count = files.Count});
-        }
+        public async Task<IActionResult> ProductUpload(List<IFormFile> files) => 
+            Ok(new {jobId = await Mediator.Send(new ImportProductCommand(files, UserContext))});
     }
 }
